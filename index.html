@@ -1,13 +1,36 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="height: 100%">
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AaBbCc 123</title>
+    <title>ABC</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        overflow: hidden;
+      }
+
+      #playground {
+        height: 100%;
+        position: relative;
+        background: black;
+      }
+
+      h1 {
+        padding: 10px;
+        color: white;
+        position: absolute;
+      }
+    </style>
   </head>
-  <body>
-    <canvas id="canvas"> </canvas>
+  <body style="height: 100%">
+    <div id="playground"></div>
     <script src="./script.js"></script>
   </body>
 </html>
