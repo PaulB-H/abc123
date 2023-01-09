@@ -31,11 +31,36 @@ const alphabet = [
 
 const fontSize = 50;
 
-let placedLettters = [];
+let placedLettters = new Set();
+
+let speaking = false;
+
+const speakWord = (letter, el) => {
+  speaking = true;
+
+  // Here we will call our audio file
+  console.log(letter);
+
+  window.setTimeout(() => {
+    speaking = false;
+
+    el.remove();
+    placedLettters.delete(el);
+
+    if (placedLettters.size === 0) console.log("Restart game");
+  }, 1500);
+};
 
 alphabet.forEach((letter) => {
   const newLetter = document.createElement("h1");
   newLetter.innerText = letter;
+
+  newLetter.value = letter.charAt(0).toLocaleLowerCase();
+  newLetter.addEventListener("click", (e) => {
+    if (speaking) return;
+    speakWord(e.target.value, e.target);
+  });
+
   pg.insertAdjacentElement("afterbegin", newLetter);
 
   const randomLoc = () => {
@@ -77,7 +102,7 @@ alphabet.forEach((letter) => {
   };
   checkIntersections();
 
-  placedLettters.push(newLetter);
+  placedLettters.add(newLetter);
 });
 
 // Thank you chatGPT >.>
