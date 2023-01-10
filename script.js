@@ -66,7 +66,7 @@ const speakWord = (letter, el) => {
     placedLettters.delete(el);
 
     if (placedLettters.size === 0) setupGame();
-  }, 1);
+  }, 1500);
 };
 
 // Thank you chatGPT >.>
