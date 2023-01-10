@@ -39,7 +39,25 @@ const speakWord = (letter, el) => {
   speaking = true;
 
   // Here we will call our audio file
-  console.log(letter);
+  console.log(`Speaking:`, letter);
+
+  el.style.color = `#ff0000`;
+  el.style.fontSize = `${fontSize * 3}px`;
+  el.style.zIndex = 10;
+  el.style.webkitTextStroke = "2px black";
+  el.style.background = "rgba(0,0,0,0.7)";
+  el.style.webkitBoxShadow = `0px 0px 28px 30px rgba(0,0,0,0.7)`;
+  el.style.boxShadow = `0px 0px 28px 30px rgba(0,0,0,0.7)`;
+
+  const box = el.getBoundingClientRect();
+
+  // If offscreen right or bottom, move element on screen
+  if (box.right >= pg.offsetWidth) {
+    el.style.left = `${pg.offsetWidth - el.offsetWidth}px`;
+  }
+  if (box.bottom >= pg.offsetHeight) {
+    el.style.top = `${pg.offsetHeight - el.offsetHeight}px`;
+  }
 
   window.setTimeout(() => {
     speaking = false;
