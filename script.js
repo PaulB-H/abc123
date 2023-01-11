@@ -89,8 +89,12 @@ const setupGame = () => {
   alphabet.forEach((letter) => {
     const newLetter = document.createElement("h1");
     newLetter.innerText = letter;
-
     newLetter.value = letter.charAt(0).toLocaleLowerCase();
+
+    newLetter.addEventListener("touchstart", (e) => {
+      if (speaking) return;
+      speakWord(e.target.value, e.target);
+    });
     newLetter.addEventListener("click", (e) => {
       if (speaking) return;
       speakWord(e.target.value, e.target);
@@ -142,3 +146,6 @@ const setupGame = () => {
 };
 
 setupGame();
+
+// Using this to disable pinch to zoom...
+pg.addEventListener("touchstart", (e) => e.preventDefault(), false);
