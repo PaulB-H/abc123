@@ -1,108 +1,119 @@
-const pg = document.getElementById("playground");
+const pg = document.getElementById("playground") as HTMLDivElement;
 
 const alphabet = [
-  "Aa",
-  "Bb",
-  "Cc",
-  "Dd",
-  "Ee",
-  "Ff",
-  "Gg",
-  "Hh",
-  "Ii",
-  "Jj",
-  "Kk",
-  "Ll",
-  "Mm",
-  "Nn",
-  "Oo",
-  "Pp",
-  "Qq",
-  "Rr",
-  "Ss",
-  "Tt",
-  "Uu",
-  "Vv",
-  "Ww",
-  "Xx",
-  "Yy",
-  "Zz",
+  "a",
+  "b",
+  "c",
+  "d",
+  "e",
+  "f",
+  "g",
+  "h",
+  "i",
+  "j",
+  "k",
+  "l",
+  "m",
+  "n",
+  "o",
+  "p",
+  "q",
+  "r",
+  "s",
+  "t",
+  "u",
+  "v",
+  "w",
+  "x",
+  "y",
+  "z",
 ];
 
 const fontSize = 50;
 
-let placedLettters = new Set();
+let placedLetters = new Set<HTMLHeadingElement>();
 
 let speaking = false;
 
-const speakWord = (letter, el) => {
+const speakWord = (el: HTMLHeadingElement): void => {
   speaking = true;
 
   // Here we will call our audio file
-  console.log(`Speaking:`, letter);
+  // console.log(`Speaking:`, letter);
 
   el.style.color = `#ff0000`;
   el.style.fontSize = `${fontSize * 3}px`;
-  el.style.zIndex = 10;
+  el.style.zIndex = "10";
   el.style.webkitTextStroke = "2px black";
   el.style.background = "rgba(0,0,0,0.7)";
   el.style.webkitBoxShadow = `0px 0px 28px 30px rgba(0,0,0,0.7)`;
   el.style.boxShadow = `0px 0px 28px 30px rgba(0,0,0,0.7)`;
 
-  const box = el.getBoundingClientRect();
+  const elRect = el.getBoundingClientRect();
 
   // If offscreen right or bottom, move element on screen
-  if (box.right >= pg.offsetWidth) {
+  if (elRect.right >= pg.offsetWidth) {
     el.style.left = `${pg.offsetWidth - el.offsetWidth}px`;
   }
-  if (box.bottom >= pg.offsetHeight) {
+  if (elRect.bottom >= pg.offsetHeight) {
     el.style.top = `${pg.offsetHeight - el.offsetHeight}px`;
   }
 
-  window.setTimeout(() => {
+  window.setTimeout((): void => {
     speaking = false;
 
     el.remove();
-    placedLettters.delete(el);
+    placedLetters.delete(el);
 
-    if (placedLettters.size === 0) setupGame();
+    if (placedLetters.size === 0) setupGame();
   }, 1500);
 };
 
 // Thank you chatGPT >.>
-function elementsIntersect(el1, el2) {
+const elementsIntersect = (
+  el1: HTMLHeadingElement,
+  el2: HTMLHeadingElement
+): boolean => {
   // get bounding rectangles for both elements
   const rect1 = el1.getBoundingClientRect();
   const rect2 = el2.getBoundingClientRect();
 
   // check if the rectangles intersect
+  // if ALL the the values are true, return true
+  // else if one is false return false
   return (
     rect1.left < rect2.right &&
     rect1.right > rect2.left &&
     rect1.top < rect2.bottom &&
     rect1.bottom > rect2.top
   );
-}
+};
 
-const setupGame = () => {
-  placedLettters = new Set();
+const setupGame = (): void => {
+  placedLetters.clear();
+
   alphabet.forEach((letter) => {
     const newLetter = document.createElement("h1");
     newLetter.innerText = letter;
-    newLetter.value = letter.charAt(0).toLocaleLowerCase();
 
-    newLetter.addEventListener("touchstart", (e) => {
+    newLetter.addEventListener("touchstart", (): void => {
       if (speaking) return;
-      speakWord(e.target.value, e.target);
+
+      speakWord(newLetter);
     });
-    newLetter.addEventListener("click", (e) => {
+    newLetter.addEventListener("click", (): void => {
       if (speaking) return;
-      speakWord(e.target.value, e.target);
+
+      speakWord(newLetter);
     });
 
     pg.insertAdjacentElement("afterbegin", newLetter);
 
-    const randomLoc = () => {
+    interface coords {
+      xloc: number;
+      yloc: number;
+    }
+    const randomLoc = (): coords => {
       let xloc = Math.floor(Math.random() * pg.offsetWidth);
       let yloc = Math.floor(Math.random() * pg.offsetHeight);
 
@@ -113,14 +124,14 @@ const setupGame = () => {
     // placement attempts within setRandomLoc() and checkIntersections()
     let recursions = 0;
 
-    const setRandomLoc = () => {
+    const setRandomLoc = (): void => {
       if (recursions >= 100) return;
-      coords = randomLoc();
+      const coords = randomLoc();
       newLetter.style.cssText = `font-size: ${fontSize}px; top: ${coords.yloc}px; left: ${coords.xloc}px`;
 
       if (
         coords.xloc + newLetter.offsetWidth >= pg.offsetWidth ||
-        coords.yloc + newLetter.offsetWidth >= pg.offsetHeight
+        coords.yloc + newLetter.offsetHeight >= pg.offsetHeight
       ) {
         setRandomLoc();
         recursions++;
@@ -128,10 +139,10 @@ const setupGame = () => {
     };
     setRandomLoc();
 
-    const checkIntersections = () => {
+    const checkIntersections = (): void => {
       if (recursions >= 100) return;
 
-      placedLettters.forEach((element) => {
+      placedLetters.forEach((element: HTMLHeadingElement) => {
         if (elementsIntersect(newLetter, element)) {
           setRandomLoc();
           checkIntersections();
@@ -141,7 +152,7 @@ const setupGame = () => {
     };
     checkIntersections();
 
-    placedLettters.add(newLetter);
+    placedLetters.add(newLetter);
   });
 };
 
