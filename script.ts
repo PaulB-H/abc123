@@ -35,7 +35,11 @@ let placedLetters = new Set<HTMLHeadingElement>();
 
 let speaking = false;
 
-const speakWord = (el: HTMLHeadingElement): void => {
+const speakWord = (
+  el: HTMLHeadingElement,
+  xloc: number,
+  yloc: number
+): void => {
   speaking = true;
 
   // Here we will call our audio file
@@ -48,15 +52,25 @@ const speakWord = (el: HTMLHeadingElement): void => {
   el.style.background = "rgba(0,0,0,0.7)";
   el.style.webkitBoxShadow = `0px 0px 28px 30px rgba(0,0,0,0.7)`;
   el.style.boxShadow = `0px 0px 28px 30px rgba(0,0,0,0.7)`;
+  el.style.padding = "0px";
+  // Center element on mouse or touch x and y loc
+  el.style.left = `${xloc - el.clientWidth / 2}px`;
+  el.style.top = `${yloc - el.clientHeight / 2}px`;
 
   const elRect = el.getBoundingClientRect();
 
-  // If offscreen right or bottom, move element on screen
+  // If offscreen after enlarging, move on screen
   if (elRect.right >= pg.offsetWidth) {
     el.style.left = `${pg.offsetWidth - el.offsetWidth}px`;
   }
   if (elRect.bottom >= pg.offsetHeight) {
     el.style.top = `${pg.offsetHeight - el.offsetHeight}px`;
+  }
+  if (elRect.top < 0) {
+    el.style.top = `0px`;
+  }
+  if (elRect.left < 0) {
+    el.style.left = `0px`;
   }
 
   window.setTimeout((): void => {
@@ -96,15 +110,15 @@ const setupGame = (): void => {
     const newLetter = document.createElement("h1");
     newLetter.innerText = letter;
 
-    newLetter.addEventListener("touchstart", (): void => {
+    newLetter.addEventListener("touchstart", (e: TouchEvent): void => {
       if (speaking) return;
 
-      speakWord(newLetter);
+      speakWord(newLetter, e.touches[0].clientX, e.touches[0].clientY);
     });
-    newLetter.addEventListener("click", (): void => {
+    newLetter.addEventListener("click", (e: MouseEvent): void => {
       if (speaking) return;
 
-      speakWord(newLetter);
+      speakWord(newLetter, e.clientX, e.clientY);
     });
 
     pg.insertAdjacentElement("afterbegin", newLetter);
